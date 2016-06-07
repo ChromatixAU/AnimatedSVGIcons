@@ -13,6 +13,7 @@
  * - remove mobile checks
  * - allow customised viewbox sizing
  * - remove the need for a separate icon name in the config
+ * - add support for alternate collection of properties based on media matches
  * Modifications Copyright 2016, Chromatix
  * http://www.chromatix.com.au
  *
@@ -48,6 +49,17 @@
 		e.type == 'mouseout' ? e.toElement : e.fromElement; 
 		while (reltg && reltg != handler) reltg = reltg.parentNode; 
 		return (reltg != handler); 
+	}
+	
+	// CHROMATIX TM 07/06/2016
+	// add support for alternate collection of properties based on media matches
+	function getMediaMatchedProperties(a){
+		for(i in a.animProperties.mediaMatch){
+			if(a.animProperties.mediaMatch[i].condition && window.matchMedia(a.animProperties.mediaMatch[i].condition).matches){
+				return a.animProperties.mediaMatch[i];
+			}
+		}
+		return a.animProperties.mediaMatch[0]; // default to whatever is first if no match was found
 	}
 
 	/*** svgIcon ***/
@@ -115,7 +127,8 @@
 		for( var i = 0, len = this.config.animation.length; i < len; ++i ) {
 			var a = this.config.animation[ i ],
 				el = this.svg.select( a.el ),
-				animProp = this.toggled ? a.animProperties.from : a.animProperties.to,
+				animProp = a.animProperties.mediaMatch ? getMediaMatchedProperties(a) : a.animProperties,
+				animProp = this.toggled ? animProp.from : animProp.to,
 				val = animProp.val, 
 				timeout = motion && animProp.delayFactor ? animProp.delayFactor : 0;
 			
