@@ -14,6 +14,7 @@
  * - allow customised viewbox sizing
  * - remove the need for a separate icon name in the config
  * - add support for alternate collection of properties based on media matches
+ * - force an initial toggling of both states so that the from prop can be the start state
  * Modifications Copyright 2016, Chromatix
  * http://www.chromatix.com.au
  *
@@ -90,6 +91,10 @@
 			self.options.onLoad();
 			self._initEvents();
 			if( self.reverse ) {
+				self.toggle();
+			}else{
+				// CHROMATIX TM 07/06/2016 - force an initial toggling of both states at load time so we don't have to rely on the initial parameters in the SVG, but rather can change it in our from property
+				self.toggle();
 				self.toggle();
 			}
 		});
