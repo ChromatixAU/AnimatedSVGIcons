@@ -8,6 +8,7 @@
  * Copyright 2013, Codrops
  * http://www.codrops.com
  *
+ * Chromatix modifications v1.0.1
  * Modified by Tim Malone to:
  * - remove mobile checks
  * - allow customised viewbox sizing
