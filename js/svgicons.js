@@ -1,3 +1,6 @@
+
+// https://github.com/ChromatixAU/AnimatedSVGIcons/blob/master/js/svgicons.js
+
 /**
  * svgicons.js v1.0.0
  * http://www.codrops.com
@@ -8,13 +11,13 @@
  * Copyright 2013, Codrops
  * http://www.codrops.com
  *
- * Chromatix modifications v1.0.2
+ * Chromatix modifications v1.0.3
  * Modified by Tim Malone to:
  * - remove mobile checks
  * - allow customised viewbox sizing
  * - remove the need for a separate icon name in the config
  * - add support for alternate collection of properties based on media matches
- * - force an initial toggling of both states so that the from prop can be the start state
+ * - add support for parsing SVGs inline rather than using another external request
  * Modifications Copyright 2016, Chromatix
  * http://www.chromatix.com.au
  *
@@ -84,20 +87,34 @@
 		}
 		if( !this.config ) return;
 		var self = this;
-		// load external svg
-		Snap.load( this.config.url, function (f) {
-			var g = f.select( 'g' );
+		
+		// load/parse callback
+		var callback = function (fragment) {
+			var g = fragment.select( 'g' );
 			self.svg.append( g );
 			self.options.onLoad();
 			self._initEvents();
 			if( self.reverse ) {
 				self.toggle();
-			}else{
-				// CHROMATIX TM 07/06/2016 - force an initial toggling of both states at load time so we don't have to rely on the initial parameters in the SVG, but rather can change it in our from property
-				self.toggle();
-				self.toggle();
 			}
-		});
+		};
+		
+		// load external svg
+		// http://snapsvg.io/docs/#Snap.load
+		if(this.config.url){
+			Snap.load( this.config.url, callback );
+			return;
+		}
+		
+		// CHROMATIX TM 07/06/2016
+		// add support for parsing SVGs inline rather than using another external request
+		// http://snapsvg.io/docs/#Snap.parse
+		if(this.config.svg){
+			var fragment = Snap.parse(this.config.svg);
+			callback(fragment);
+			return;
+		}
+		
 	}
 
 	svgIcon.prototype.options = {
